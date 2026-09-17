@@ -7,6 +7,7 @@
   "exercises": [
     {"name":"Développé épaules","subtitle":"Développé épaules à la machine","gif":"https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@main/delts/lever-military-press.gif","sets":3,"reps_min":8,"reps_max":12,"rest_seconds":120},
     {"name":"Élévation latérale à la machine","subtitle":"Élévation latérale à la machine — deltoïde moyen","gif":"","sets":2,"reps_min":10,"reps_max":15,"rest_seconds":90},
-    {"name":"Oiseau à la machine","subtitle":"Élévation arrière à la machine — deltoïde postérieur","gif":"","sets":2,"reps_min":10,"reps_max":15,"rest_seconds":90}
+    {"name":"Oiseau à la machine","subtitle":"Élévation arrière à la machine — deltoïde postérieur","gif":"","sets":2,"reps_min":10,"reps_max":15,"rest_seconds":90},
+    {"name":"Face pull à la poulie","subtitle":"Tirage visage à la poulie — deltoïdes arrière et haut du dos","gif":"","sets":2,"reps_min":12,"reps_max":15,"rest_seconds":90}
   ]
 }
