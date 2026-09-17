@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0b0d11">
+<title>Muscu Coach IA</title>
+<style>
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;background:#0b0d11;overflow:hidden}iframe{display:block;border:0;width:100%;height:100%;min-height:100vh;background:#0b0d11}
+</style>
+</head>
+<body>
+<iframe id="coachFrame" src="entrainement-v15.html?v=15" title="Muscu Coach IA"></iframe>
+<script>
+(function(){
+  const frame=document.getElementById('coachFrame');
+  const EXTRA_KEY='muscuCoachTodayExtrasV1';
+  let installed=false;
+
+  function safeRead(){try{return JSON.parse(localStorage.getItem(EXTRA_KEY)||'{}')}catch(e){return {key:'',items:[]}}}
+  function safeWrite(v){localStorage.setItem(EXTRA_KEY,JSON.stringify(v))}
+  function baseKey(data){return JSON.stringify({date:data?.date||'',objectif:data?.objectif||'',exercises:(data?.exercises||[]).map(e=>[e.name,e.sets])})}
+  function baseExercises(){const w=frame.contentWindow;return (w.today?.exercises||[]).filter(e=>!e._extra)}
+  function currentBaseKey(){const w=frame.contentWindow;return baseKey({date:w.today?.date,objectif:w.today?.objectif,exercises:baseExercises()})}
+  function ensureFreshExtras(){const s=safeRead(),k=currentBaseKey();if(s.key!==k){safeWrite({key:k,items:[]});return []}return Array.isArray(s.items)?s.items:[]}
+  function mergeExtras(){const w=frame.contentWindow;if(!w.today||!Array.isArray(w.today.exercises))return;const base=baseExercises(),extras=ensureFreshExtras();w.today.exercises=[...base,...extras];if(typeof w.loadTodayProgress==='function')w.loadTodayProgress();if(typeof w.renderHome==='function')w.renderHome()}
+  function hasSession(){const w=frame.contentWindow;return !!(w.today?.active&&(w.today.exercises||[]).length&&!w.isStopped?.())}
+  function showFrameStatus(text,cls){try{const w=frame.contentWindow;if(typeof w.showStatus==='function')w.showStatus(text,cls||'')}catch(e){}}
+
+  const CARDIO_KEY='muscuCoachTodayCardioV1';
+  const CARDIO_PRESETS=[
+    {id:'rower',name:'Rameur',subtitle:'Cardio — rythme régulier, intensité modérée',duration:8,intensity:'modérée'},
+    {id:'bike',name:'Vélo',subtitle:'Cardio — pédalage continu, intensité modérée',duration:10,intensity:'modérée'},
+    {id:'treadmill',name:'Tapis de course',subtitle:'Cardio — marche/course selon les sensations',duration:10,intensity:'modérée'},
+    {id:'elliptical',name:'Elliptique',subtitle:'Cardio — mouvement continu, intensité modérée',duration:10,intensity:'modérée'}
+  ];
+  let cardioTimer=null,cardioRemaining=0,activeCardio=null;
+  function cardioRead(){try{return JSON.parse(localStorage.getItem(CARDIO_KEY)||'{}')}catch(e){return {key:'',items:[]}}}
+  function cardioWrite(v){localStorage.setItem(CARDIO_KEY,JSON.stringify(v))}
+  function cardioState(){const s=cardioRead(),k=currentBaseKey();if(s.key!==k){const fresh={key:k,items:[]};cardioWrite(fresh);return fresh}return {key:k,items:Array.isArray(s.items)?s.items:[]}}
+  function cardioItems(){return cardioState().items}
+  function saveCardioItems(items){cardioWrite({key:currentBaseKey(),items})}
+  function patchSessionProgressWithCardio(){
+    const w=frame.contentWindow,items=cardioItems();
+    if(!w.today?.active||w.isStopped?.())return;
+    const base=(w.today.exercises||[]),baseTotal=base.reduce((a,e)=>a+Number(e.sets||0),0),baseDone=base.reduce((a,e)=>a+Math.min(Number(e.sets||0),Number(w.doneSets?.(e.name)||0)),0),cardioDone=items.filter(x=>x.done).length;
+    const total=baseTotal+items.length,done=baseDone+cardioDone,pct=total?Math.round(done/total*100):0;
+    const exCount=base.length,extraText=items.length?` · + ${items.length} cardio`:'';
+    if(w.$('heroMeta'))w.$('heroMeta').textContent=(w.today.date||'Aujourd’hui')+' · '+exCount+' exercices'+extraText;
+    if(w.$('sessionBar'))w.$('sessionBar').style.width=pct+'%';
+    if(w.$('sessionProgress'))w.$('sessionProgress').textContent=done+' / '+total+' éléments terminés · '+pct+'%';
+  }
+  function renderCardio(){
+    const w=frame.contentWindow,doc=frame.contentDocument,box=doc.getElementById('todayExercises');
+    if(!box||!w.today?.active||w.isStopped?.())return;
+    const old=doc.getElementById('mcCardioSection');if(old)old.remove();
+    const items=cardioItems();if(!items.length){patchSessionProgressWithCardio();return}
+    const sec=doc.createElement('div');sec.id='mcCardioSection';
+    sec.innerHTML=`<div style="margin-top:14px;padding-top:12px;border-top:1px solid #252c36"><div style="font-size:16px;font-weight:900;margin-bottom:7px">❤️ Cardio ajouté</div><div style="color:#9ca7b5;font-size:12px;margin-bottom:7px">Ces activités comptent dans ta séance, sans modifier ton programme permanent.</div>${items.map((x,i)=>`<div class="exercise-card" style="${x.done?'opacity:.65':''}"><div class="exercise-head"><div><div class="exercise-name">${x.done?'✅':'🫀'} ${x.name}</div><div class="exercise-sub">${x.subtitle||''}</div></div><div class="chip">${x.done?'Terminé':x.duration+' min'}</div></div><div class="chips"><span class="chip">⏱️ ${x.duration} min</span><span class="chip">🔥 ${x.intensity||'modérée'}</span></div>${x.done?'<div class="status ok">Cardio enregistré dans l’historique.</div>':'<button class="primary actions" data-cardio-start="'+i+'">Démarrer</button>'}</div>`).join('')}</div>`;
+    box.appendChild(sec);
+    sec.querySelectorAll('[data-cardio-start]').forEach(b=>b.addEventListener('click',()=>startCardio(Number(b.getAttribute('data-cardio-start')))));
+    patchSessionProgressWithCardio();
+  }
+  function openCardioModal(index){const doc=frame.contentDocument,modal=doc.getElementById('mcCardioModal');if(!modal)return;const item=cardioItems()[index];if(!item)return;modal.querySelector('[data-cardio-name]').textContent=item.name;modal.querySelector('[data-cardio-sub]').textContent=item.subtitle||'';modal.querySelector('[data-cardio-time]').textContent=fmtCardio(item.duration*60);modal.classList.remove('hidden')}
+  function fmtCardio(s){return String(Math.max(0,Math.floor(s/60))).padStart(2,'0')+':'+String(Math.max(0,s%60)).padStart(2,'0')}
+  function startCardio(index){const item=cardioItems()[index];if(!item)return;activeCardio=index;cardioRemaining=item.duration*60;openCardioModal(index);clearInterval(cardioTimer);const modal=frame.contentDocument.getElementById('mcCardioModal');cardioTimer=setInterval(()=>{cardioRemaining--;modal.querySelector('[data-cardio-time]').textContent=fmtCardio(cardioRemaining);if(cardioRemaining<=0){clearInterval(cardioTimer);finishCardio(true)}},1000)}
+  function finishCardio(auto=false){
+    if(activeCardio===null)return;clearInterval(cardioTimer);
+    const state=cardioState(),item=state.items[activeCardio];if(!item)return;
+    item.done=true;state.items[activeCardio]=item;saveCardioItems(state.items);
+    const w=frame.contentWindow,h=w.history();h.push({type:'cardio',date:new Date().toLocaleString('fr-FR'),exercise:item.name,set:1,load:item.duration+' min',value:item.duration,mode:'cardio',left:'',right:'',reps:'—',diff:item.intensity||'modérée',pain:0,duration_minutes:item.duration});w.saveHistory(h);w.renderHistory();
+    const modal=frame.contentDocument.getElementById('mcCardioModal');if(modal)modal.classList.add('hidden');showFrameStatus(auto?'⏱️ Cardio terminé et enregistré.':'✅ Cardio enregistré.','ok');activeCardio=null;renderCardio();
+  }
+  function injectCardioModal(doc){
+    if(doc.getElementById('mcCardioModal'))return;
+    const m=doc.createElement('div');m.id='mcCardioModal';m.className='modal-back hidden';m.innerHTML=`<div class="modal"><div class="section-title">❤️ <span data-cardio-name>Cardio</span></div><div class="sub" data-cardio-sub></div><div style="text-align:center;font-size:54px;font-weight:950;margin:20px 0 8px" data-cardio-time>00:00</div><div class="sub" style="text-align:center">Tu peux terminer plus tôt si nécessaire.</div><div class="row" style="margin-top:14px"><button class="primary" data-cardio-finish>✅ Terminer</button><button class="ghost" data-cardio-close>Fermer</button></div></div>`;doc.body.appendChild(m);
+    m.querySelector('[data-cardio-finish]').onclick=()=>finishCardio(false);m.querySelector('[data-cardio-close]').onclick=()=>{clearInterval(cardioTimer);activeCardio=null;m.classList.add('hidden')};m.addEventListener('click',e=>{if(e.target===m){clearInterval(cardioTimer);activeCardio=null;m.classList.add('hidden')}});
+  }
+  function patchHistory(){
+    const w=frame.contentWindow;if(w.__mcCardioHistoryPatched)return;w.__mcCardioHistoryPatched=true;const originalHistory=w.history,originalRender=w.renderHistory;
+    w.renderHistory=function(){const full=originalHistory();w.history=()=>full.filter(x=>x.type!=='cardio');try{originalRender()}finally{w.history=originalHistory}const cardio=full.filter(x=>x.type==='cardio').slice(-6).reverse();if(cardio.length){const hist=frame.contentDocument.getElementById('hist'),wrap=frame.contentDocument.createElement('div');wrap.innerHTML=cardio.map(x=>`<div class="history-item"><b>❤️ ${x.exercise}</b> · ${x.duration_minutes} min<br>${x.diff} · douleur ${x.pain}/10<br><span class="sub">${x.date}</span></div>`).join('');hist.prepend(...wrap.childNodes)}};
+  }
+
+  function injectCss(doc){
+    if(doc.getElementById('mc-extra-style'))return;
+    const s=doc.createElement('style');s.id='mc-extra-style';s.textContent=`#mcAddExtraBtn{margin-top:8px;border:1px solid #354154;background:#182231;color:#dbe7ff}#mcAddExtraBtn:hover{filter:brightness(1.08)}#mcAddCardioBtn{margin-top:8px;border:1px solid #3b4a40;background:#1a2b22;color:#dff7e7}#mcAddCardioBtn:hover{filter:brightness(1.08)}#mcExtraModal{position:fixed;inset:0;background:rgba(0,0,0,.68);display:flex;align-items:flex-end;justify-content:center;padding:12px;z-index:200}#mcExtraModal.hidden{display:none!important}.mc-extra-box{width:100%;max-width:620px;background:#151922;border:1px solid #334052;border-radius:22px;padding:17px;box-shadow:0 20px 70px rgba(0,0,0,.45)}.mc-extra-title{font-size:19px;font-weight:900;margin-bottom:7px}.mc-extra-sub{font-size:13px;color:#9ca7b5;line-height:1.45}.mc-extra-box label{display:block;font-size:13px;font-weight:800;margin:14px 0 6px}.mc-extra-box select,.mc-extra-box input{font:inherit;width:100%;border-radius:13px;border:1px solid #384352;background:#0f141b;color:#fff;padding:13px}.mc-extra-preview{background:#0e1319;border-radius:13px;padding:11px;margin-top:10px;font-size:13px;line-height:1.4}.mc-extra-row{display:flex;gap:8px;margin-top:13px}.mc-extra-row>*{flex:1}.mc-extra-primary{background:#f0f3f6!important;color:#11151b!important;border-color:#f0f3f6!important}.mc-extra-cancel{background:#222a35!important;color:#fff!important}`;doc.head.appendChild(s)
+  }
+  function injectUi(){
+    const w=frame.contentWindow,doc=frame.contentDocument;injectCss(doc);if(doc.getElementById('mcAddExtraBtn'))return;
+    const cards=[...doc.querySelectorAll('.card')],catalogCard=cards.find(c=>c.querySelector('.section-title')?.textContent.includes('Exercices'));if(!catalogCard)return;
+    const startBtn=catalogCard.querySelector('button.primary[onclick="startSelectedExercise()"]');if(!startBtn)return;
+    const btn=doc.createElement('button');btn.id='mcAddExtraBtn';btn.className='secondary';btn.textContent='➕ Ajouter à la séance en cours';startBtn.insertAdjacentElement('afterend',btn);
+    const modal=doc.createElement('div');modal.id='mcExtraModal';modal.className='hidden';modal.innerHTML=`<div class="mc-extra-box"><div class="mc-extra-title">➕ Ajouter à la séance en cours</div><div class="mc-extra-sub">L’exercice sera comptabilisé dans la séance actuelle, mais ne modifiera pas ton programme permanent.</div><label>Exercice</label><select id="mcExtraSelect"></select><div id="mcExtraPreview" class="mc-extra-preview"></div><label>Nombre de séries</label><input id="mcExtraSets" type="number" min="1" max="10" step="1"><div class="mc-extra-row"><button id="mcExtraAdd" class="mc-extra-primary">Ajouter à la séance</button><button id="mcExtraCancel" class="mc-extra-cancel">Annuler</button></div></div>`;doc.body.appendChild(modal);
+    const sel=doc.getElementById('mcExtraSelect'),sets=doc.getElementById('mcExtraSets'),preview=doc.getElementById('mcExtraPreview');let catalog=[];
+    function updatePreview(){const e=catalog[Number(sel.value)];if(!e)return;sets.value=Math.max(1,Number(e.sets)||1);preview.innerHTML=`<b>${e.name}</b><br><span style="color:#9ca7b5">${e.subtitle||''}</span><br><span style="color:#cbd4df">🎯 ${e.reps_min}-${e.reps_max} reps · ⏱️ ${Math.round((e.rest_seconds||120)/60)} min</span>`}
+    function openModal(){catalog=w.catalog||[];sel.innerHTML=catalog.map((e,i)=>`<option value="${i}">${e.name}</option>`).join('');if(catalog.length)updatePreview();modal.classList.remove('hidden')}
+    btn.onclick=openModal;
+    const cardioBtn=doc.createElement('button');cardioBtn.id='mcAddCardioBtn';cardioBtn.className='secondary';cardioBtn.textContent='❤️ Ajouter du cardio';cardioBtn.onclick=()=>openCardioAddModal();btn.insertAdjacentElement('afterend',cardioBtn);
+    injectCardioAddModal(doc);
+    sel.addEventListener('change',updatePreview);doc.getElementById('mcExtraCancel').onclick=()=>modal.classList.add('hidden');modal.addEventListener('click',ev=>{if(ev.target===modal)modal.classList.add('hidden')});
+    doc.getElementById('mcExtraAdd').onclick=()=>{if(!hasSession()){showFrameStatus('Aucune séance active. Demande d’abord une séance au coach.','warn');modal.classList.add('hidden');return}const e={...(catalog[Number(sel.value)]||{})};if(!e.name)return;const currentNames=(w.today?.exercises||[]).map(x=>x.name);if(currentNames.includes(e.name)){showFrameStatus('Cet exercice est déjà dans la séance du jour. Choisis un autre exercice.','warn');return}e.sets=Math.max(1,Math.min(10,Number(sets.value)||Number(e.sets)||1));e._extra=true;const items=ensureFreshExtras();items.push(e);safeWrite({key:currentBaseKey(),items});mergeExtras();modal.classList.add('hidden');showFrameStatus('✅ '+e.name+' ajouté à la séance en cours.','ok')};
+  }
+  function injectCardioAddModal(doc){
+    if(doc.getElementById('mcCardioAddModal'))return;
+    const m=doc.createElement('div');m.id='mcCardioAddModal';m.className='modal-back hidden';m.innerHTML=`<div class="modal"><div class="section-title">❤️ Ajouter du cardio</div><div class="sub">Le cardio est ajouté uniquement à la séance en cours. Il ne modifie pas ton programme permanent.</div><label style="display:block;font-size:13px;font-weight:800;margin:14px 0 6px">Activité</label><select id="mcCardioPreset"></select><label style="display:block;font-size:13px;font-weight:800;margin:14px 0 6px">Durée</label><div class="row"><input id="mcCardioMinutes" type="number" min="1" max="120" step="1"><span style="display:grid;place-items:center;min-width:46px;color:#cbd4df">min</span></div><label style="display:block;font-size:13px;font-weight:800;margin:14px 0 6px">Intensité</label><select id="mcCardioIntensity"><option>légère</option><option selected>modérée</option><option>soutenue</option></select><div class="row" style="margin-top:14px"><button id="mcCardioAdd" class="primary">Ajouter à la séance</button><button id="mcCardioCancel" class="ghost">Annuler</button></div></div>`;doc.body.appendChild(m);
+    const p=doc.getElementById('mcCardioPreset'),mins=doc.getElementById('mcCardioMinutes');p.innerHTML=CARDIO_PRESETS.map((x,i)=>`<option value="${i}">${x.name}</option>`).join('');function sync(){const x=CARDIO_PRESETS[Number(p.value)];if(x)mins.value=x.duration}p.addEventListener('change',sync);sync();doc.getElementById('mcCardioCancel').onclick=()=>m.classList.add('hidden');m.addEventListener('click',e=>{if(e.target===m)m.classList.add('hidden')});doc.getElementById('mcCardioAdd').onclick=()=>{if(!hasSession()){showFrameStatus('Aucune séance active. Demande d’abord une séance au coach.','warn');m.classList.add('hidden');return}const x=CARDIO_PRESETS[Number(p.value)],duration=Math.max(1,Math.min(120,Number(mins.value)||x.duration)),intensity=doc.getElementById('mcCardioIntensity').value;const items=cardioItems();if(items.some(y=>y.name===x.name&&!y.done)){showFrameStatus('Ce cardio est déjà ajouté à la séance.','warn');return}items.push({id:Date.now()+'-'+x.id,name:x.name,subtitle:x.subtitle,duration,intensity,done:false});saveCardioItems(items);m.classList.add('hidden');renderCardio();showFrameStatus('✅ '+x.name+' ajouté à la séance.','ok')};
+  }
+  function patchFunctions(){
+    const w=frame.contentWindow;if(installed)return;if(!w.today||typeof w.refreshAll!=='function')return;installed=true;
+    w.sessionKey=function(){const ex=(w.today?.exercises||[]).filter(e=>!e._extra);return JSON.stringify({date:w.today?.date||'',objectif:w.today?.objectif||'',exercises:ex.map(e=>[e.name,e.sets])})};
+    const originalRefresh=w.refreshAll;w.refreshAll=async function(){await originalRefresh();const s=safeRead(),k=currentBaseKey();if(s.key!==k)safeWrite({key:k,items:[]});cardioState();mergeExtras();renderCardio()};
+    const originalRenderSession=w.renderSession;w.renderSession=function(){originalRenderSession();renderCardio();patchSessionProgressWithCardio()};
+    patchHistory();ensureFreshExtras();cardioState();mergeExtras();injectCardioModal(frame.contentDocument);injectUi();renderCardio();
+  }
+  frame.addEventListener('load',()=>setTimeout(()=>{patchFunctions();injectUi()},120));setTimeout(()=>{patchFunctions();injectUi()},1200);
+})();
+</script>
+</body>
+</html>
