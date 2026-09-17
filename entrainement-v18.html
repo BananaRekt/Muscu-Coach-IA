@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0b0d11">
+<title>Muscu Coach IA</title>
+<style>*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;background:#0b0d11;overflow:hidden}iframe{display:block;border:0;width:100%;height:100%;min-height:100vh;background:#0b0d11}</style>
+</head>
+<body>
+<iframe id="coachFrame" src="entrainement-v17.html?v=17" title="Muscu Coach IA"></iframe>
+<script>
+(function(){
+  const frame=document.getElementById('coachFrame');
+  let patched=false;
+  function patch(){
+    if(patched)return;
+    const w=frame.contentWindow;
+    if(!w||typeof w.showSet!=='function')return;
+    patched=true;
+    const originalShowSet=w.showSet;
+    w.showSet=function(first=false){
+      originalShowSet(first);
+      const doc=frame.contentDocument;
+      if(!doc)return;
+      doc.querySelectorAll('#difficulty button,#pain button,#reps button').forEach(b=>b.disabled=false);
+      const finish=doc.getElementById('finish');
+      if(finish)finish.disabled=false;
+    };
+  }
+  frame.addEventListener('load',()=>setTimeout(patch,100));
+  setTimeout(patch,1200);
+})();
+</script>
+</body>
+</html>
