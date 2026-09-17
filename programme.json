@@ -5,7 +5,7 @@
     "A": {
       "name": "Séance A",
       "exercises": [
-        {"name":"Presse à pectoraux","subtitle":"Presse à pectoraux à leviers — mouvement convergent","gif":"https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@main/pectorals/lever-chest-press.gif","sets":3,"reps_min":8,"reps_max":12,"rest_seconds":120},
+        {"name":"Presse à pectoraux","subtitle":"Presse à pectoraux à leviers — mouvement convergent","gif":"https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@main/pectorals/lever-chest-press.gif","sets":4,"reps_min":10,"reps_max":12,"rest_seconds":120},
         {"name":"Tirage vertical","subtitle":"Tirage vertical à la poulie","gif":"","sets":3,"reps_min":8,"reps_max":12,"rest_seconds":120},
         {"name":"Rowing assis","subtitle":"Rowing assis à la poulie","gif":"","sets":3,"reps_min":8,"reps_max":12,"rest_seconds":120}
       ]
