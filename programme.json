@@ -1,0 +1,14 @@
+{
+  "version": 1,
+  "last_updated": null,
+  "sessions": {
+    "A": {
+      "name": "Séance A",
+      "exercises": []
+    },
+    "B": {
+      "name": "Séance B",
+      "exercises": []
+    }
+  }
+}
