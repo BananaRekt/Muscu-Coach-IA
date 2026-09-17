@@ -1,0 +1,22 @@
+{
+  "version": 1,
+  "exported_at": "2026-09-17T16:45:33.419Z",
+  "source": "Muscu Coach IA",
+  "history": [
+    {
+      "date": "17/09/2026 18:06:30",
+      "day": "Lundi",
+      "session": "A",
+      "exercise": "Presse à pectoraux",
+      "set": 1,
+      "load": "5 kg",
+      "value": 5,
+      "mode": "central",
+      "left": "",
+      "right": "",
+      "reps": 10,
+      "diff": "facile",
+      "pain": 0
+    }
+  ]
+}
