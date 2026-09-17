@@ -1,6 +1,18 @@
 {
   "version": 1,
   "last_updated": "2026-09-17",
+  "gif_policy": {
+    "required_when_available": true,
+    "source": "ExerciseGymGifsDB",
+    "base_url": "https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0",
+    "rules": [
+      "Pour chaque nouvel exercice, chercher un GIF correspondant exactement au mouvement.",
+      "Ne jamais inventer une URL de GIF.",
+      "Avant d'enregistrer l'exercice, vérifier que l'URL du GIF correspond à un fichier réel de la base.",
+      "Écrire l'URL directe du GIF dans le champ gif de programme.json et, si nécessaire, de seance-du-jour.json.",
+      "Ne laisser gif vide que si aucun GIF réellement correspondant n'existe, et le signaler explicitement."
+    ]
+  },
   "sessions": {
     "A": {
       "name": "Séance A",
