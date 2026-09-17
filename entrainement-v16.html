@@ -82,10 +82,11 @@
     const catalogCard=cards.find(c=>c.querySelector('.section-title')?.textContent.includes('Exercices'));
     if(!catalogCard)return;
     const startBtn=catalogCard.querySelector('button.primary[onclick="startSelectedExercise()"]');if(!startBtn)return;
-    const btn=doc.createElement('button');btn.id='mcAddExtraBtn';btn.className='secondary';btn.textContent='➕ Ajouter à la séance en cours';btn.onclick=()=>openModal();startBtn.insertAdjacentElement('afterend',btn);
+    const btn=doc.createElement('button');btn.id='mcAddExtraBtn';btn.className='secondary';btn.textContent='➕ Ajouter à la séance en cours';startBtn.insertAdjacentElement('afterend',btn);
     const modal=doc.createElement('div');modal.id='mcExtraModal';modal.className='hidden';
     modal.innerHTML=`<div class="mc-extra-box"><div class="mc-extra-title">➕ Ajouter à la séance en cours</div><div class="mc-extra-sub">L’exercice sera comptabilisé dans la séance actuelle, mais ne modifiera pas ton programme permanent.</div><label>Exercice</label><select id="mcExtraSelect"></select><div id="mcExtraPreview" class="mc-extra-preview"></div><label>Nombre de séries</label><input id="mcExtraSets" type="number" min="1" max="10" step="1"><div class="mc-extra-row"><button id="mcExtraAdd" class="mc-extra-primary">Ajouter à la séance</button><button id="mcExtraCancel" class="mc-extra-cancel">Annuler</button></div></div>`;
     doc.body.appendChild(modal);
+    const openModal=()=>modal.classList.remove('hidden');btn.onclick=openModal;
     const sel=doc.getElementById('mcExtraSelect'),sets=doc.getElementById('mcExtraSets'),preview=doc.getElementById('mcExtraPreview'),catalog=w.catalog||[];
     sel.innerHTML=catalog.map((e,i)=>`<option value="${i}">${e.name}</option>`).join('');
     function updatePreview(){const e=catalog[Number(sel.value)];if(!e)return;sets.value=Math.max(1,Number(e.sets)||1);preview.innerHTML=`<b>${e.name}</b><br><span style="color:#9ca7b5">${e.subtitle||''}</span><br><span style="color:#cbd4df">🎯 ${e.reps_min}-${e.reps_max} reps · ⏱️ ${Math.round((e.rest_seconds||120)/60)} min</span>`}
