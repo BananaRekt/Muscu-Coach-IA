@@ -6,17 +6,17 @@
       "name": "Séance A",
       "exercises": [
         {"name":"Presse à pectoraux","subtitle":"Presse à pectoraux à leviers — mouvement convergent","gif":"https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@main/pectorals/lever-chest-press.gif","sets":4,"reps_min":10,"reps_max":12,"rest_seconds":120},
-        {"name":"Tirage vertical","subtitle":"Tirage vertical à la poulie","gif":"","sets":3,"reps_min":8,"reps_max":12,"rest_seconds":120},
-        {"name":"Rowing assis","subtitle":"Rowing assis à la poulie","gif":"","sets":3,"reps_min":8,"reps_max":12,"rest_seconds":120},
+        {"name":"Tirage vertical","subtitle":"Tirage vertical à la poulie","gif":"https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@main/lats/cable-pulldown.gif","sets":3,"reps_min":8,"reps_max":12,"rest_seconds":120},
+        {"name":"Rowing assis","subtitle":"Rowing assis à la poulie","gif":"https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@main/upper-back/cable-seated-row.gif","sets":3,"reps_min":8,"reps_max":12,"rest_seconds":120},
         {"name":"Presse à cuisses","subtitle":"Presse à cuisses à 45° à chargement libre","gif":"https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@main/glutes/sled-45-leg-press.gif","sets":3,"reps_min":8,"reps_max":12,"rest_seconds":120}
       ]
     },
     "B": {
       "name": "Séance B",
       "exercises": [
-        {"name":"Développé épaules","subtitle":"Développé épaules à la machine","gif":"","sets":3,"reps_min":8,"reps_max":12,"rest_seconds":120},
-        {"name":"Curl biceps à la machine","subtitle":"Curl biceps à la machine","gif":"","sets":3,"reps_min":8,"reps_max":12,"rest_seconds":120},
-        {"name":"Extension triceps","subtitle":"Extension triceps à la poulie","gif":"","sets":3,"reps_min":8,"reps_max":12,"rest_seconds":120}
+        {"name":"Développé épaules","subtitle":"Développé épaules à la machine","gif":"https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@main/delts/lever-military-press.gif","sets":3,"reps_min":8,"reps_max":12,"rest_seconds":120},
+        {"name":"Curl biceps à la machine","subtitle":"Curl biceps à la machine","gif":"https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@main/biceps/lever-bicep-curl.gif","sets":3,"reps_min":8,"reps_max":12,"rest_seconds":120},
+        {"name":"Extension triceps","subtitle":"Extension triceps à la poulie","gif":"https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@main/triceps/cable-pushdown.gif","sets":3,"reps_min":8,"reps_max":12,"rest_seconds":120}
       ]
     }
   }
