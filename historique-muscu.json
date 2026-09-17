@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "exported_at": "2026-09-17T17:42:59.216Z",
+  "exported_at": "2026-09-17T18:51:35.741Z",
   "source": "Muscu Coach IA",
   "history": [
     {
@@ -29,6 +29,73 @@
       "left": "",
       "right": "",
       "reps": 10,
+      "diff": "facile",
+      "pain": 0
+    },
+    {
+      "date": "17/09/2026 19:44:24",
+      "day": "jeudi",
+      "exercise": "Presse à pectoraux",
+      "set": 1,
+      "load": "10 kg",
+      "value": 10,
+      "mode": "central",
+      "left": "",
+      "right": "",
+      "reps": 10,
+      "diff": "facile",
+      "pain": 0
+    },
+    {
+      "date": "17/09/2026 19:52:52",
+      "day": "jeudi",
+      "exercise": "Presse à pectoraux",
+      "set": 1,
+      "load": "10 kg",
+      "value": 10,
+      "mode": "central",
+      "left": "",
+      "right": "",
+      "reps": 10,
+      "diff": "facile",
+      "pain": 0
+    },
+    {
+      "date": "17/09/2026 20:37:41",
+      "exercise": "Développé épaules",
+      "set": 1,
+      "load": "10 kg",
+      "value": 10,
+      "mode": "central",
+      "left": "",
+      "right": "",
+      "reps": 9,
+      "diff": "facile",
+      "pain": 0
+    },
+    {
+      "date": "17/09/2026 20:37:49",
+      "exercise": "Développé épaules",
+      "set": 2,
+      "load": "10 kg",
+      "value": 10,
+      "mode": "central",
+      "left": "",
+      "right": "",
+      "reps": 9,
+      "diff": "facile",
+      "pain": 0
+    },
+    {
+      "date": "17/09/2026 20:37:52",
+      "exercise": "Développé épaules",
+      "set": 3,
+      "load": "10 kg",
+      "value": 10,
+      "mode": "central",
+      "left": "",
+      "right": "",
+      "reps": 9,
       "diff": "facile",
       "pain": 0
     }
