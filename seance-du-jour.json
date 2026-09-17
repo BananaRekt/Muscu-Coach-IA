@@ -2,12 +2,14 @@
   "version": 1,
   "active": true,
   "date": "17/09/2026",
-  "objectif": "Épaules — séance adaptée aux courbatures du haut du corps",
-  "notes": "Pas de cardio. Pas de recherche d'échec. Charges à calibrer selon les sensations du jour. Stopper ou adapter en cas de douleur.",
+  "objectif": "Haut du corps",
+  "notes": "Quelques courbatures. Charges à calibrer selon les sensations du jour. Pas de recherche d'échec. Adapter ou arrêter en cas de douleur.",
   "exercises": [
+    {"name":"Presse à pectoraux","subtitle":"Presse à pectoraux à leviers — mouvement convergent","gif":"https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@main/pectorals/lever-chest-press.gif","sets":3,"reps_min":10,"reps_max":12,"rest_seconds":120},
+    {"name":"Tirage vertical","subtitle":"Tirage vertical à la poulie","gif":"https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@main/lats/cable-pulldown.gif","sets":3,"reps_min":8,"reps_max":12,"rest_seconds":120},
+    {"name":"Rowing assis","subtitle":"Rowing assis à la poulie","gif":"https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@main/upper-back/cable-seated-row.gif","sets":3,"reps_min":8,"reps_max":12,"rest_seconds":120},
     {"name":"Développé épaules","subtitle":"Développé épaules à la machine","gif":"https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@main/delts/lever-military-press.gif","sets":3,"reps_min":8,"reps_max":12,"rest_seconds":120},
-    {"name":"Élévation latérale à la machine","subtitle":"Élévation latérale à la machine — deltoïde moyen","gif":"https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@main/delts/lever-lateral-raise.gif","sets":2,"reps_min":10,"reps_max":15,"rest_seconds":90},
-    {"name":"Oiseau à la machine","subtitle":"Élévation arrière à la machine — deltoïde postérieur","gif":"https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@main/delts/lever-seated-reverse-fly.gif","sets":2,"reps_min":10,"reps_max":15,"rest_seconds":90},
-    {"name":"Face pull à la poulie","subtitle":"Tirage visage à la poulie — deltoïdes arrière et haut du dos","gif":"","sets":2,"reps_min":12,"reps_max":15,"rest_seconds":90}
+    {"name":"Curl biceps à la machine","subtitle":"Curl biceps à la machine","gif":"https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@main/biceps/lever-bicep-curl.gif","sets":2,"reps_min":8,"reps_max":12,"rest_seconds":90},
+    {"name":"Extension triceps","subtitle":"Extension triceps à la poulie","gif":"https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@main/triceps/cable-pushdown.gif","sets":2,"reps_min":8,"reps_max":12,"rest_seconds":90}
   ]
 }
