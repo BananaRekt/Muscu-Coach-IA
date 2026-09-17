@@ -7,7 +7,7 @@
   "exercises": [
     {"name":"Presse à pectoraux","subtitle":"Presse à pectoraux à leviers — mouvement convergent","gif":"https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@main/pectorals/lever-chest-press.gif","sets":3,"reps_min":10,"reps_max":12,"rest_seconds":120},
     {"name":"Tirage vertical","subtitle":"Tirage vertical à la poulie","gif":"https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@main/lats/cable-pulldown.gif","sets":2,"reps_min":8,"reps_max":12,"rest_seconds":120},
-    {"name":"Rowing assis","subtitle":"Rowing assis à la poulie","gif":"https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@main/upper-back/cable-seated-row.gif","sets":2,"reps_min":8,"reps_max":12,"rest_seconds":120},
+    {"name":"Rowing buste penché à la barre","subtitle":"Rowing buste penché à la barre sur la machine guidée","gif":"https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@main/upper-back/barbell-bent-over-row.gif","sets":2,"reps_min":8,"reps_max":12,"rest_seconds":120},
     {"name":"Développé épaules","subtitle":"Développé épaules à la machine","gif":"https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@main/delts/lever-military-press.gif","sets":2,"reps_min":8,"reps_max":12,"rest_seconds":120}
   ]
 }
