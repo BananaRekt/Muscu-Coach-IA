@@ -2,12 +2,12 @@
   "version": 1,
   "active": true,
   "date": "17/09/2026",
-  "objectif": "Haut du corps — séance adaptée aux courbatures moyennes",
+  "objectif": "Bas du corps — séance adaptée aux courbatures du haut du corps",
   "notes": "Pas de cardio. Pas de recherche d'échec. Charges à calibrer selon les sensations du jour.",
   "exercises": [
-    {"name":"Presse à pectoraux","subtitle":"Presse à pectoraux à leviers — mouvement convergent","gif":"https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@main/pectorals/lever-chest-press.gif","sets":3,"reps_min":10,"reps_max":12,"rest_seconds":120},
-    {"name":"Tirage vertical","subtitle":"Tirage vertical à la poulie","gif":"https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@main/lats/cable-pulldown.gif","sets":2,"reps_min":8,"reps_max":12,"rest_seconds":120},
-    {"name":"Rowing buste penché à la barre","subtitle":"Rowing buste penché à la barre sur la machine guidée","gif":"https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@main/upper-back/barbell-bent-over-row.gif","sets":2,"reps_min":8,"reps_max":12,"rest_seconds":120},
-    {"name":"Développé épaules","subtitle":"Développé épaules à la machine","gif":"https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@main/delts/lever-military-press.gif","sets":2,"reps_min":8,"reps_max":12,"rest_seconds":120}
+    {"name":"Presse à cuisses","subtitle":"Presse à cuisses à 45° à chargement libre","gif":"https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@main/glutes/sled-45-leg-press.gif","sets":3,"reps_min":8,"reps_max":12,"rest_seconds":120},
+    {"name":"Leg curl assis","subtitle":"Leg curl assis à la machine — ischio-jambiers","gif":"https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@main/hamstrings/lever-seated-leg-curl.gif","sets":3,"reps_min":10,"reps_max":12,"rest_seconds":120},
+    {"name":"Leg extension","subtitle":"Extension des jambes à la machine — quadriceps","gif":"https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@main/quads/lever-leg-extension.gif","sets":2,"reps_min":10,"reps_max":12,"rest_seconds":90},
+    {"name":"Mollets à la presse","subtitle":"Élévation des talons sur la presse à cuisses","gif":"https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@main/calves/lever-seated-squat-calf-raise-on-leg-press-machine.gif","sets":2,"reps_min":12,"reps_max":15,"rest_seconds":90}
   ]
 }
