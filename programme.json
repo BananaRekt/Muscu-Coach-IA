@@ -21,6 +21,7 @@
     }
   },
   "catalogue": [
-    {"name":"Presse à pectoraux inclinée Panatta","subtitle":"Presse à pectoraux inclinée à leviers — chargement libre","gif":"","sets":3,"reps_min":8,"reps_max":12,"rest_seconds":120}
+    {"name":"Presse à pectoraux inclinée Panatta","subtitle":"Presse à pectoraux inclinée à leviers — chargement libre","gif":"","sets":3,"reps_min":8,"reps_max":12,"rest_seconds":120},
+    {"name":"Rowing buste penché à la barre","subtitle":"Rowing buste penché à la barre — mouvement pour le haut du dos","gif":"https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@main/upper-back/barbell-bent-over-row.gif","sets":2,"reps_min":8,"reps_max":12,"rest_seconds":120}
   ]
 }
