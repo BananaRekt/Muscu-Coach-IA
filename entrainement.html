@@ -28,7 +28,7 @@
 </div>
 
 <div class="card hidden" id="work">
-  <button class="secondary back" onclick="returnToPicker()">← Retour aux exercices</button>
+  <button class="secondary back" onclick="confirmReturn()">← Retour aux exercices</button>
   <div id="count" class="muted"></div>
   <div class="bar"><div id="bar"></div></div>
   <div class="exercise-title" id="name"></div>
@@ -76,6 +76,7 @@ function finishSet(){const e=current;let loadText='',value=0;if(mode==='central'
 function startRest(){document.getElementById('rest').classList.remove('hidden');let s=120;const t=document.getElementById('timer');t.textContent='02:00';clearInterval(timer);timer=setInterval(()=>{s--;t.textContent=String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');if(s<=0){clearInterval(timer);t.textContent='Prêt 💪';document.getElementById('restmsg').textContent='Repos terminé. Tu peux continuer.'}},1000)}
 function skipRest(){clearInterval(timer);document.getElementById('timer').textContent='Prêt 💪';document.getElementById('restmsg').textContent='Repos passé. Tu peux continuer.'}
 function nextSet(){clearInterval(timer);if(si+1<current.sets){si++;showSet()}}
+function confirmReturn(){if(confirm('Quitter cet exercice ?\n\nLes séries déjà terminées restent enregistrées.\nLes séries non terminées ne seront pas ajoutées aux statistiques.'))returnToPicker()}
 function returnToPicker(){clearInterval(timer);document.getElementById('work').classList.add('hidden');document.getElementById('done').classList.add('hidden');document.getElementById('picker').classList.remove('hidden');renderPicker()}
 function openAgentAdd(){const prompt='Je suis à la salle et cet exercice n’est pas disponible dans mon interface. Je vais t’envoyer une photo de la machine. Identifie-la, donne-moi les réglages, la technique, les muscles, la plage de répétitions, les séries et le repos, trouve un GIF fiable si disponible, puis ajoute l’exercice au programme.json sans modifier les autres exercices.';navigator.clipboard?.writeText(prompt).catch(()=>{});window.open('https://chatgpt.com/','_blank');alert('Le message de demande a été copié. Ouvre ton projet « Muscu Coach IA », colle-le et envoie la photo. Après l’ajout, reviens ici et appuie sur « Actualiser ».')}
 async function syncHistory(){const s=document.getElementById('syncStatus');const data={version:1,exported_at:new Date().toISOString(),source:'Muscu Coach IA',history:H()};s.className='stat';s.textContent='Synchronisation en cours…';try{const q=await fetch(SYNC_URL+'/sync',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});const r=await q.json().catch(()=>({}));if(!q.ok||!r.ok)throw Error(r.error||'Erreur');s.className='stat ok';s.textContent='✅ Historique synchronisé avec le coach.'}catch(e){s.className='stat warn';s.textContent='❌ Synchronisation impossible. Ton historique local est conservé.'}}
