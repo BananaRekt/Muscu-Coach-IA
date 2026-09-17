@@ -3,7 +3,7 @@
   "active": true,
   "date": "17/09/2026",
   "objectif": "Haut du corps",
-  "notes": "Quelques courbatures. Charges à calibrer selon les sensations du jour. Pas de recherche d'échec. Adapter ou arrêter en cas de douleur.",
+  "notes": "État du jour : bonne forme, 1 heure disponible. Charges à calibrer selon les sensations. Pas de recherche d'échec. Adapter ou arrêter en cas de douleur.",
   "exercises": [
     {"name":"Presse à pectoraux","subtitle":"Presse à pectoraux à leviers — mouvement convergent","gif":"https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@main/pectorals/lever-chest-press.gif","sets":3,"reps_min":10,"reps_max":12,"rest_seconds":120},
     {"name":"Tirage vertical","subtitle":"Tirage vertical à la poulie","gif":"https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@main/lats/cable-pulldown.gif","sets":3,"reps_min":8,"reps_max":12,"rest_seconds":120},
