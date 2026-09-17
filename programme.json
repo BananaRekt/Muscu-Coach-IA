@@ -14,7 +14,7 @@
       "name": "Séance B",
       "exercises": [
         {"name":"Développé épaules","subtitle":"Développé épaules à la machine","gif":"","sets":3,"reps_min":8,"reps_max":12,"rest_seconds":120},
-        {"name":"Curl biceps","subtitle":"Curl biceps","gif":"","sets":3,"reps_min":8,"reps_max":12,"rest_seconds":120},
+        {"name":"Curl biceps à la machine","subtitle":"Curl biceps à la machine","gif":"","sets":3,"reps_min":8,"reps_max":12,"rest_seconds":120},
         {"name":"Extension triceps","subtitle":"Extension triceps à la poulie","gif":"","sets":3,"reps_min":8,"reps_max":12,"rest_seconds":120}
       ]
     }
