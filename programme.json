@@ -19,5 +19,8 @@
         {"name":"Extension triceps","subtitle":"Extension triceps à la poulie","gif":"https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@main/triceps/cable-pushdown.gif","sets":3,"reps_min":8,"reps_max":12,"rest_seconds":120}
       ]
     }
-  }
+  },
+  "catalogue": [
+    {"name":"Presse à pectoraux inclinée Panatta","subtitle":"Presse à pectoraux inclinée à leviers — chargement libre","gif":"","sets":3,"reps_min":8,"reps_max":12,"rest_seconds":120}
+  ]
 }
