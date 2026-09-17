@@ -1,0 +1,467 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Muscu Coach IA — Prototype</title>
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;background:#0f1115;color:#f5f7fa;font-family:Arial,Helvetica,sans-serif}
+  .app{max-width:760px;margin:0 auto;padding:22px}
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
+  .brand{font-size:24px;font-weight:800}
+  .badge{background:#1c222b;border-radius:999px;padding:8px 12px;font-size:13px}
+  .card{background:#171b22;border:1px solid #292f39;border-radius:18px;padding:18px;margin-bottom:14px}
+  .exercise{font-size:26px;font-weight:800;margin-bottom:4px}
+  .sub{color:#aeb6c2}
+  .gif{width:100%;max-height:360px;object-fit:contain;background:#0b0d10;border-radius:14px;margin:16px 0}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .stat{background:#10141a;border-radius:12px;padding:12px}
+  .label{font-size:12px;color:#9da6b2;margin-bottom:4px}
+  .value{font-size:20px;font-weight:700}
+  h3{margin:18px 0 10px;font-size:16px}
+  .buttons{display:flex;flex-wrap:wrap;gap:8px}
+  button{border:0;border-radius:12px;padding:12px 14px;background:#252c36;color:#fff;font-weight:700;cursor:pointer}
+  button:hover{filter:brightness(1.12)}
+  button:disabled{opacity:.45;cursor:not-allowed;filter:none}
+  button.selected{outline:2px solid #fff}
+  .green{background:#234a35}.yellow{background:#4b431e}.orange{background:#56351e}.red{background:#5a2429}
+  .primary{width:100%;font-size:17px;padding:15px;background:#e9edf2;color:#101319;margin-top:16px}
+  .status{font-size:15px;line-height:1.45;color:#dce2e9}
+  .timer{font-size:34px;font-weight:800;text-align:center;margin:8px 0}
+  .next{display:none}
+  .next.show{display:block}
+  .small{font-size:13px;color:#98a2af}
+  @media(max-width:600px){.app{padding:14px}.exercise{font-size:22px}.grid{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="top">
+    <div class="brand">🏋️ Muscu Coach IA</div>
+    <div class="badge">Prototype</div>
+  </div>
+
+  
+  <div id="sessionProgress" class="card" style="margin-bottom:14px;padding:14px 16px">
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;font-weight:700">
+      <span id="exerciseCounter">Exercice 1 / 6</span>
+      <span id="setCounter">Série 1 / 3</span>
+    </div>
+    <div style="height:7px;background:#2a3038;border-radius:99px;overflow:hidden;margin-top:10px">
+      <div id="sessionProgressBar" style="height:100%;width:5.5%;border-radius:99px"></div>
+  <div id="previousPerformance" class="card" style="margin-bottom:14px;padding:14px 16px">
+    <div style="font-weight:800;margin-bottom:6px">📊 Dernière séance</div>
+    <div id="previousPerformanceText" style="opacity:.85">Aucun historique pour cet exercice.</div>
+  </div>
+
+    </div>
+  </div>
+<div class="card">
+    <div class="exercise">Presse à pectoraux</div>
+    <div class="sub">Presse à pectoraux à leviers — mouvement convergent</div>
+
+    <img class="gif"
+      src="https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@main/pectorals/lever-chest-press.gif"
+      alt="Démonstration animée de la presse à pectoraux"
+      onerror="this.style.display='none';document.getElementById('gifError').style.display='block';">
+
+    <div id="gifError" class="small" style="display:none">
+      Le GIF n'a pas pu être chargé. Vérifie la connexion Internet.
+    </div>
+
+    <div class="small" style="margin:-4px 0 12px">Tu peux modifier la charge à tout moment si la charge prévue ne convient pas.</div>
+
+    <div class="grid">
+      <div class="stat"><div class="label">Série</div><div class="value" id="set">1</div></div>
+      <div class="stat" style="grid-column:1/-1">
+  <div class="label">Charge utilisée</div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin:8px 0">
+    <button class="loadMode selected" data-mode="central">Poids central</button>
+    <button class="loadMode" data-mode="side">Poids par côté</button>
+    
+  </div>
+  <div id="centralBox" style="display:flex;align-items:center;gap:8px">
+    <button id="minusLoad">−</button>
+    <input id="centralLoad" type="number" min="0" step="0.5" value="5"
+      style="width:90px;background:#10141a;color:#fff;border:1px solid #3a424e;border-radius:10px;padding:9px;font-size:20px;font-weight:700;text-align:center">
+    <button id="plusLoad">+</button><span>kg</span>
+  </div>
+  <div id="sideBox" style="display:none;align-items:center;gap:8px;flex-wrap:wrap">
+    <span>Gauche</span>
+    <input id="leftLoad" type="number" min="0" step="0.5" value="5"
+      style="width:80px;background:#10141a;color:#fff;border:1px solid #3a424e;border-radius:10px;padding:9px;font-size:18px;font-weight:700;text-align:center">
+    <span>kg</span>
+    <span>Droite</span>
+    <input id="rightLoad" type="number" min="0" step="0.5" value="5"
+      style="width:80px;background:#10141a;color:#fff;border:1px solid #3a424e;border-radius:10px;padding:9px;font-size:18px;font-weight:700;text-align:center">
+    <span>kg</span>
+  </div>
+</div>
+      <div class="stat"><div class="label">Objectif</div><div class="value">10 répétitions</div></div>
+      <div class="stat"><div class="label">Repos</div><div class="value">2 min</div></div>
+    <div style="font-size:12px;opacity:.75;margin-top:8px">Le coach propose une évolution, mais tu peux toujours modifier la charge avant la série suivante.</div>
+</div>
+
+    <h3>Combien de répétitions ?</h3>
+    <div class="buttons" id="reps">
+      <button data-value="8">8</button><button data-value="9">9</button>
+      <button data-value="10">10</button><button data-value="11">11</button>
+      <button data-value="12">12</button>
+    </div>
+
+    <h3>Difficulté</h3>
+    <div class="buttons" id="difficulty">
+      <button class="green" data-value="Facile">🟢 Facile</button>
+      <button class="yellow" data-value="Correcte">🟡 Correcte</button>
+      <button class="orange" data-value="Difficile">🟠 Difficile</button>
+      <button class="red" data-value="Très difficile">🔴 Très difficile</button>
+    </div>
+
+    <h3>Douleur</h3>
+    <div class="buttons" id="pain">
+      <button class="green" data-value="Aucune">🟢 Aucune</button>
+      <button class="yellow" data-value="Légère">🟡 Légère</button>
+      <button class="red" data-value="Forte">🔴 Forte</button>
+    </div>
+
+    
+  <div id="completedSeries" style="margin:10px 0 0;display:flex;gap:7px;flex-wrap:wrap"></div>
+<div id="coachDecision" class="card" style="margin:14px 0;padding:14px">
+    <div style="font-weight:800;margin-bottom:6px">🧠 Décision du coach</div>
+    <div id="coachDecisionText">Fais ta série puis indique les répétitions, la difficulté et la douleur.</div>
+  </div>
+<button class="primary" id="finish">✅ Série terminée</button>
+  </div>
+
+  <div class="card next" id="next">
+    <div class="status" id="decision"></div>
+    <div class="timer" id="timer">02:00</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="primary" id="startTimer" style="margin-top:0;flex:1">⏱️ Démarrer le repos</button>
+      <button class="primary" id="skipRest" style="margin-top:0;flex:1">Passer le repos</button>
+    </div>
+    <button class="primary" id="nextSet" style="display:none">➡️ Série suivante</button>
+  </div>
+</div>
+
+<script>
+const state={reps:null,difficulty:null,pain:null,set:1,load:5,loadMode:'central'};
+
+function bindGroup(id,key){
+  document.querySelectorAll(`#${id} button`).forEach(b=>{
+    b.addEventListener('click',()=>{
+      document.querySelectorAll(`#${id} button`).forEach(x=>x.classList.remove('selected'));
+      b.classList.add('selected');
+      state[key]=b.dataset.value;
+    });
+  });
+}
+bindGroup('reps','reps');
+bindGroup('difficulty','difficulty');
+bindGroup('pain','pain');
+
+const centralLoad=document.getElementById('centralLoad');
+const leftLoad=document.getElementById('leftLoad');
+const rightLoad=document.getElementById('rightLoad');
+
+function actualLoadText(){
+  if(state.loadMode==='central') return `${Number(centralLoad.value)||0} kg`;
+  return `gauche ${Number(leftLoad.value)||0} kg / droite ${Number(rightLoad.value)||0} kg`;
+}
+function readActualLoad(){
+  if(state.loadMode==='central') return {mode:'central',kg:Number(centralLoad.value)||0};
+  return {mode:'side',leftKg:Number(leftLoad.value)||0,rightKg:Number(rightLoad.value)||0};
+}
+
+document.querySelectorAll('.loadMode').forEach(btn=>{
+  btn.onclick=()=>{
+    state.loadMode=btn.dataset.mode;
+    document.querySelectorAll('.loadMode').forEach(b=>b.classList.toggle('selected',b===btn));
+    document.getElementById('centralBox').style.display=state.loadMode==='central'?'flex':'none';
+    document.getElementById('sideBox').style.display=state.loadMode==='side'?'flex':'none';
+  };
+});
+
+document.getElementById('minusLoad').onclick=()=>{
+  centralLoad.value=Math.max(0,Number(centralLoad.value||0)-0.5);
+  state.load=readActualLoad();
+};
+document.getElementById('plusLoad').onclick=()=>{
+  centralLoad.value=Number(centralLoad.value||0)+0.5;
+  state.load=readActualLoad();
+};
+[centralLoad,leftLoad,rightLoad].forEach(el=>el.addEventListener('input',()=>{
+  state.load=readActualLoad();
+}));
+
+let interval=null,seconds=120;
+
+function render(){
+  const m=String(Math.floor(seconds/60)).padStart(2,'0');
+  const s=String(seconds%60).padStart(2,'0');
+  document.getElementById('timer').textContent=`${m}:${s}`;
+}
+
+function finishRest(){
+  clearInterval(interval);
+  document.getElementById('timer').textContent='Prêt 💪';
+  document.getElementById('startTimer').style.display='none';
+  document.getElementById('skipRest').style.display='none';
+  document.getElementById('nextSet').style.display='block';
+}
+
+function startRest(){
+  clearInterval(interval);
+  seconds=120;
+  render();
+  document.getElementById('startTimer').textContent='⏳ Repos en cours…';
+  document.getElementById('startTimer').style.display='block';
+  document.getElementById('skipRest').style.display='block';
+  document.getElementById('nextSet').style.display='none';
+  interval=setInterval(()=>{
+    seconds--;
+    render();
+    if(seconds<=0) finishRest();
+  },1000);
+}
+
+
+
+const workoutMemory = {
+  key: 'muscuCoachHistoryV1',
+  read(){
+    try { return JSON.parse(localStorage.getItem(this.key) || '{}'); }
+    catch(e){ return {}; }
+  },
+  write(data){
+    try { localStorage.setItem(this.key, JSON.stringify(data)); }
+    catch(e){}
+  },
+  exerciseKey(){
+    const title = document.querySelector('h1,h2,h3')?.textContent || 'Exercice';
+    return title.trim().toLowerCase();
+  },
+  saveSet(data){
+    const all=this.read();
+    const key=this.exerciseKey();
+    if(!all[key]) all[key]=[];
+    all[key].push({...data, timestamp:new Date().toISOString()});
+    // Keep the most recent 50 sets per exercise.
+    all[key]=all[key].slice(-50);
+    this.write(all);
+  },
+  latest(){
+    const all=this.read();
+    const arr=all[this.exerciseKey()] || [];
+    return arr.length ? arr[arr.length-1] : null;
+  }
+};
+
+function renderPreviousPerformance(){
+  const box=document.getElementById('previousPerformanceText');
+  if(!box) return;
+  const last=workoutMemory.latest();
+  if(!last){
+    box.textContent='Aucun historique pour cet exercice.';
+    return;
+  }
+  let loadText=last.loadText || '';
+  box.textContent=`Dernière série : ${last.reps} reps · ${loadText} · difficulté ${last.difficulty}/10`;
+}
+renderPreviousPerformance();
+startingLoadSuggestion();
+
+
+function startingLoadSuggestion(){
+  const last=workoutMemory.latest();
+  const box=document.getElementById('coachDecisionText');
+  if(!box || !last) return;
+  box.textContent=`📊 La dernière fois : ${last.reps} reps avec ${last.loadText}. On part de cette référence aujourd’hui, puis on ajuste selon ta série.`;
+}
+function coachDecisionEngine(reps, difficulty, pain, targetMin=8, targetMax=12){
+  const d = String(difficulty || '').toLowerCase();
+  const p = String(pain || '').toLowerCase();
+  const result = {
+    action:'keep',
+    title:'Conserver la charge',
+    text:'',
+    nextLoad:null
+  };
+
+  // Safety first: pain overrides performance progression.
+  if(p.includes('fort') || p.includes('douleur forte')){
+    result.action='stop';
+    result.title='⚠️ On arrête cet exercice';
+    result.text='Douleur forte : pas de progression de charge. On arrête cet exercice et on vérifie la douleur.';
+    return result;
+  }
+  if(p.includes('modér') || p.includes('moyen')){
+    result.action='keep';
+    result.title='⚠️ Pas d’augmentation';
+    result.text='Douleur modérée : on ne monte pas la charge. Si la douleur augmente ou gêne le mouvement, on arrête.';
+    return result;
+  }
+
+  // Difficulty is the main progression signal. Never force a heavier load.
+  if(d.includes('très difficile') || d.includes('difficile')){
+    result.action='reduce_or_keep';
+    result.title='🔻 Ne pas augmenter';
+    result.text='Série très difficile : on garde ou on réduit la charge pour rester propre, sans aller à l’échec.';
+    return result;
+  }
+
+  if(d.includes('facile') && reps >= targetMax){
+    result.action='increase';
+    result.title='📈 Petite augmentation possible';
+    result.text='Tu es en haut de la plage de répétitions et la série était facile. Le coach peut proposer le prochain cran de charge disponible.';
+    result.nextLoad='prochain cran disponible';
+    return result;
+  }
+
+  if(d.includes('facile') && reps >= targetMin){
+    result.action='increase_if_possible';
+    result.title='📈 Progression possible';
+    result.text='La série était facile. On peut proposer une petite hausse, uniquement si le prochain cran de la machine reste raisonnable.';
+    result.nextLoad='petit cran disponible';
+    return result;
+  }
+
+  if(reps < targetMin){
+    result.action='reduce_or_keep';
+    result.title='🔻 Charge à revoir';
+    result.text='Tu es sous la plage prévue. On ne monte pas la charge ; on peut la réduire légèrement pour retrouver la bonne plage.';
+    return result;
+  }
+
+  result.action='keep';
+  result.title='➡️ Conserver';
+  result.text='La charge convient pour l’instant. On la conserve et on regarde la prochaine série.';
+  return result;
+}
+
+function showCoachDecision(result){
+  const box=document.getElementById('coachDecisionText');
+  if(!box) return;
+  box.textContent=result.title+' — '+result.text;
+}
+
+document.getElementById('finish').onclick=()=>{
+  if(!state.reps||!state.difficulty||!state.pain){
+    alert('Choisis les répétitions, la difficulté et la douleur.');
+    return;
+  }
+
+  state.load=readActualLoad();
+  if(window.workoutMemory){
+    workoutMemory.saveSet({
+      reps:Number(state.reps),
+      loadText:actualLoadText(),
+      load:readActualLoad(),
+      difficulty:state.difficulty,
+      pain:state.pain,
+      set:state.set
+    });
+  }
+  renderPreviousPerformance();
+
+  if(window.coachProgress) window.coachProgress.recordSet(Number(state.reps), actualLoadText());
+  const r=Number(state.reps);
+  const decision=coachDecisionEngine(r,state.difficulty,state.pain);
+  showCoachDecision(decision);
+  document.getElementById('decision').textContent=decision.title+' '+decision.text;
+document.getElementById('next').classList.add('show');
+
+  // Freeze the current set data while the rest timer runs.
+  document.querySelectorAll('#reps button,#difficulty button,#pain button').forEach(b=>b.disabled=true);
+  document.getElementById('finish').disabled=true;
+
+  // Start the 2-minute rest immediately.
+  startRest();
+};
+
+document.getElementById('startTimer').onclick=startRest;
+
+document.getElementById('skipRest').onclick=()=>{
+  finishRest();
+};
+
+document.getElementById('nextSet').onclick=()=>{
+  state.set++;
+  document.getElementById('set').textContent=state.set;
+
+  // Clear previous answers for the new set.
+  state.reps=null;
+  state.difficulty=null;
+  state.pain=null;
+  document.querySelectorAll('#reps button,#difficulty button,#pain button').forEach(b=>{
+    b.classList.remove('selected');
+    b.disabled=false;
+  });
+
+  document.getElementById('finish').disabled=false;
+  document.getElementById('next').classList.remove('show');
+  document.getElementById('nextSet').style.display='none';
+  document.getElementById('startTimer').style.display='block';
+  document.getElementById('skipRest').style.display='block';
+  document.getElementById('startTimer').textContent='⏱️ Démarrer le repos';
+  clearInterval(interval);
+  seconds=120;
+  render();
+
+  // Bring the set form back into focus.
+  document.getElementById('reps').scrollIntoView({behavior:'smooth',block:'center'});
+  if(window.coachProgress) window.coachProgress.nextSet();
+};</script>
+
+<script>
+(function(){
+  const totalExercises = 6;
+  const totalSets = 3;
+  let currentExercise = 1;
+  let currentSet = 1;
+  const done = [];
+
+  function updateSessionProgress(){
+    const e = document.getElementById('exerciseCounter');
+    const s = document.getElementById('setCounter');
+    const bar = document.getElementById('sessionProgressBar');
+    if(e) e.textContent = `Exercice ${currentExercise} / ${totalExercises}`;
+    if(s) s.textContent = `Série ${currentSet} / ${totalSets}`;
+    if(bar){
+      const completed = ((currentExercise-1)*totalSets + (currentSet-1));
+      const total = totalExercises*totalSets;
+      bar.style.width = Math.max(5.5, Math.min(100, ((completed+1)/total)*100)) + '%';
+    }
+    const oldSet = document.getElementById('set');
+    if(oldSet) oldSet.textContent = currentSet;
+  }
+
+  function renderCompletedSeries(){
+    const box = document.getElementById('completedSeries');
+    if(!box) return;
+    box.innerHTML = done.map((x,i) =>
+      `<span style="padding:6px 9px;border-radius:8px;background:#20262e;font-size:12px">
+        ✓ Série ${i+1} · ${x.reps} reps · ${x.load}
+      </span>`
+    ).join('');
+  }
+
+  window.coachProgress = {
+    recordSet(reps, load){
+      done.push({reps, load});
+      renderCompletedSeries();
+    },
+    nextSet(){
+      if(currentSet < totalSets) currentSet++;
+      else { currentExercise++; currentSet = 1; done.length = 0; renderCompletedSeries(); }
+      updateSessionProgress();
+    }
+  };
+
+  updateSessionProgress();
+})();
+</script>
+
+</body>
+</html>
