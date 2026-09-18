@@ -85,6 +85,42 @@ export default {
         return json(await sessionPayload(env.DB, session));
       }
 
+      if (request.method === "GET" && url.pathname === "/api/coach") {
+        const session = await env.DB.prepare(\`
+          SELECT *
+          FROM workout_sessions
+          WHERE user_id=?
+          ORDER BY session_date DESC, created_at DESC
+          LIMIT 1
+        \`).bind(uid).first();
+
+        if (!session) {
+          return json({ok:true, session:null, sets:[], cardio:[]});
+        }
+
+        const sets = await env.DB.prepare(\`
+          SELECT ps.*, se.exercise_name
+          FROM performance_sets ps
+          JOIN session_exercises se ON se.id=ps.session_exercise_id
+          WHERE ps.session_id=?
+          ORDER BY ps.recorded_at ASC
+        \`).bind(session.id).all();
+
+        const cardio = await env.DB.prepare(\`
+          SELECT *
+          FROM cardio_sessions
+          WHERE session_id=?
+          ORDER BY recorded_at ASC
+        \`).bind(session.id).all();
+
+        return json({
+          ok:true,
+          session,
+          sets:sets.results||[],
+          cardio:cardio.results||[]
+        });
+      }
+
       if (request.method === "GET" && url.pathname === "/api/history") {
         const sets = await env.DB.prepare(`
           SELECT ps.*, ws.session_date, se.exercise_name
