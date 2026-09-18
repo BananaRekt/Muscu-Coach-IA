@@ -17,39 +17,39 @@ function id() {
 }
 
 async function getActiveSession(db) {
-  return db.prepare(\`
+  return db.prepare(`
     SELECT *
     FROM workout_sessions
     WHERE user_id = ? AND status = 'active'
     ORDER BY session_date DESC, created_at DESC
     LIMIT 1
-  \`).bind(uid).first();
+  `).bind(uid).first();
 }
 
 async function sessionPayload(db, session) {
   if (!session) return { active: false, session: null, exercises: [], sets: [], cardio: [] };
 
-  const exercises = await db.prepare(\`
+  const exercises = await db.prepare(`
     SELECT *
     FROM session_exercises
     WHERE session_id = ?
     ORDER BY sort_order ASC, created_at ASC
-  \`).bind(session.id).all();
+  `).bind(session.id).all();
 
-  const sets = await db.prepare(\`
+  const sets = await db.prepare(`
     SELECT ps.*, se.exercise_name
     FROM performance_sets ps
     JOIN session_exercises se ON se.id = ps.session_exercise_id
     WHERE ps.session_id = ?
     ORDER BY ps.recorded_at ASC
-  \`).bind(session.id).all();
+  `).bind(session.id).all();
 
-  const cardio = await db.prepare(\`
+  const cardio = await db.prepare(`
     SELECT *
     FROM cardio_sessions
     WHERE session_id = ?
     ORDER BY recorded_at ASC
-  \`).bind(session.id).all();
+  `).bind(session.id).all();
 
   return { active: true, session, exercises: exercises.results || [], sets: sets.results || [], cardio: cardio.results || [] };
 }
@@ -83,7 +83,7 @@ export default {
       }
 
       if (request.method === "GET" && url.pathname === "/api/history") {
-        const sets = await env.DB.prepare(\`
+        const sets = await env.DB.prepare(`
           SELECT ps.*, ws.session_date, se.exercise_name
           FROM performance_sets ps
           JOIN workout_sessions ws ON ws.id = ps.session_id
@@ -91,16 +91,16 @@ export default {
           WHERE ws.user_id = ?
           ORDER BY ps.recorded_at DESC
           LIMIT 500
-        \`).bind(uid).all();
+        `).bind(uid).all();
 
-        const cardio = await env.DB.prepare(\`
+        const cardio = await env.DB.prepare(`
           SELECT cs.*, ws.session_date
           FROM cardio_sessions cs
           JOIN workout_sessions ws ON ws.id = cs.session_id
           WHERE ws.user_id = ?
           ORDER BY cs.recorded_at DESC
           LIMIT 200
-        \`).bind(uid).all();
+        `).bind(uid).all();
 
         return json({ ok:true, sets:sets.results || [], cardio:cardio.results || [] });
       }
@@ -120,7 +120,7 @@ export default {
           updated_at: now()
         };
 
-        await env.DB.prepare(\`
+        await env.DB.prepare(`
           INSERT INTO workout_sessions(id,user_id,session_date,objective,notes,status,created_at,updated_at)
           VALUES(?,?,?,?,?,?,?,?)
           ON CONFLICT(id) DO UPDATE SET
@@ -129,21 +129,21 @@ export default {
             notes=excluded.notes,
             status=excluded.status,
             updated_at=excluded.updated_at
-        \`).bind(
+        `).bind(
           session.id, session.user_id, session.session_date, session.objective,
           session.notes, session.status, session.created_at, session.updated_at
         ).run();
 
-        await env.DB.prepare(\`DELETE FROM session_exercises WHERE session_id = ?\`).bind(session.id).run();
+        await env.DB.prepare(`DELETE FROM session_exercises WHERE session_id = ?`).bind(session.id).run();
 
         for (const [index, e] of (body.exercises || []).entries()) {
-          await env.DB.prepare(\`
+          await env.DB.prepare(`
             INSERT INTO session_exercises(
               id,session_id,exercise_name,subtitle,exercise_type,gif,
               sets_planned,reps_min,reps_max,rest_seconds,duration_minutes,
               intensity,is_extra,sort_order
             ) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)
-          \`).bind(
+          `).bind(
             e.id || id(), session.id, e.name || "", e.subtitle || "",
             e.exercise_type || "strength", e.gif || "",
             Number(e.sets || 1), e.reps_min ?? null, e.reps_max ?? null,
@@ -152,7 +152,7 @@ export default {
           ).run();
         }
 
-        const saved = await env.DB.prepare(\`SELECT * FROM workout_sessions WHERE id = ?\`).bind(session.id).first();
+        const saved = await env.DB.prepare(`SELECT * FROM workout_sessions WHERE id = ?`).bind(session.id).first();
         return json(await sessionPayload(env.DB, saved));
       }
 
@@ -213,7 +213,7 @@ export default {
           return json({ ok:false, error:"session_id, session_exercise_id et set_number sont requis" }, 400);
         }
 
-        await env.DB.prepare(\`
+        await env.DB.prepare(`
           INSERT INTO performance_sets(
             id,session_id,session_exercise_id,set_number,load_value,load_text,
             load_mode,left_load,right_load,reps,difficulty,pain,recorded_at
@@ -228,7 +228,7 @@ export default {
             difficulty=excluded.difficulty,
             pain=excluded.pain,
             recorded_at=excluded.recorded_at
-        \`).bind(
+        `).bind(
           id(), b.session_id, b.session_exercise_id, Number(b.set_number),
           b.load_value ?? null, b.load_text || "", b.load_mode || "central",
           b.left_load ?? null, b.right_load ?? null, b.reps ?? null,
@@ -244,11 +244,11 @@ export default {
           return json({ ok:false, error:"session_id, cardio_name et duration_minutes sont requis" }, 400);
         }
 
-        await env.DB.prepare(\`
+        await env.DB.prepare(`
           INSERT INTO cardio_sessions(
             id,session_id,session_exercise_id,cardio_name,duration_minutes,intensity,pain,recorded_at
           ) VALUES(?,?,?,?,?,?,?,?)
-        \`).bind(
+        `).bind(
           id(), b.session_id, b.session_exercise_id || null, b.cardio_name,
           Number(b.duration_minutes), b.intensity || "modérée", b.pain ?? 0, now()
         ).run();
@@ -257,11 +257,11 @@ export default {
       }
 
       if (request.method === "POST" && url.pathname === "/api/session/stop") {
-        const result = await env.DB.prepare(\`
+        const result = await env.DB.prepare(`
           UPDATE workout_sessions
           SET status='stopped', updated_at=?
           WHERE user_id=? AND status='active'
-        \`).bind(now(), uid).run();
+        `).bind(now(), uid).run();
 
         return json({
           ok: true,
@@ -271,10 +271,10 @@ export default {
 
       if (request.method === "DELETE" && url.pathname === "/api/test-data") {
         await env.DB.batch([
-          env.DB.prepare(\`DELETE FROM cardio_sessions WHERE session_id IN (SELECT id FROM workout_sessions WHERE user_id=?)\`).bind(uid),
-          env.DB.prepare(\`DELETE FROM performance_sets WHERE session_id IN (SELECT id FROM workout_sessions WHERE user_id=?)\`).bind(uid),
-          env.DB.prepare(\`DELETE FROM session_exercises WHERE session_id IN (SELECT id FROM workout_sessions WHERE user_id=?)\`).bind(uid),
-          env.DB.prepare(\`DELETE FROM workout_sessions WHERE user_id=?\`).bind(uid)
+          env.DB.prepare(`DELETE FROM cardio_sessions WHERE session_id IN (SELECT id FROM workout_sessions WHERE user_id=?)`).bind(uid),
+          env.DB.prepare(`DELETE FROM performance_sets WHERE session_id IN (SELECT id FROM workout_sessions WHERE user_id=?)`).bind(uid),
+          env.DB.prepare(`DELETE FROM session_exercises WHERE session_id IN (SELECT id FROM workout_sessions WHERE user_id=?)`).bind(uid),
+          env.DB.prepare(`DELETE FROM workout_sessions WHERE user_id=?`).bind(uid)
         ]);
         return json({ ok:true, message:"Données d'entraînement supprimées" });
       }
