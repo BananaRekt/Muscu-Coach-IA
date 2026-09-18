@@ -26,6 +26,16 @@ async function getActiveSession(db) {
   `).bind(uid).first();
 }
 
+async function getLatestSession(db) {
+  return db.prepare(`
+    SELECT *
+    FROM workout_sessions
+    WHERE user_id = ?
+    ORDER BY session_date DESC, created_at DESC
+    LIMIT 1
+  `).bind(uid).first();
+}
+
 async function sessionPayload(db, session) {
   if (!session) return { active: false, session: null, exercises: [], sets: [], cardio: [] };
 
