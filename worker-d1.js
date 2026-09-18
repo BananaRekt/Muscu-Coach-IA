@@ -257,13 +257,16 @@ export default {
       }
 
       if (request.method === "POST" && url.pathname === "/api/session/stop") {
-        const session = await getActiveSession(env.DB);
-        if (session) {
-          await env.DB.prepare(\`
-            UPDATE workout_sessions SET status='stopped', updated_at=? WHERE id=?
-          \`).bind(now(), session.id).run();
-        }
-        return json({ ok:true });
+        const result = await env.DB.prepare(\`
+          UPDATE workout_sessions
+          SET status='stopped', updated_at=?
+          WHERE user_id=? AND status='active'
+        \`).bind(now(), uid).run();
+
+        return json({
+          ok: true,
+          stopped: Number(result?.meta?.changes || 0)
+        });
       }
 
       if (request.method === "DELETE" && url.pathname === "/api/test-data") {
