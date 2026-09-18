@@ -1,0 +1,37 @@
+openapi: 3.0.3
+info:
+  title: Muscu Coach IA D1
+  version: 1.0.0
+  description: Lecture des performances d'entraînement enregistrées dans D1.
+servers:
+  - url: https://muscu-coach-sync.siowtoxic3.workers.dev
+paths:
+  /api/coach:
+    get:
+      operationId: getCoachWorkoutData
+      summary: Récupérer les dernières données d'entraînement
+      description: Retourne la dernière séance et toutes les séries/cardio associés.
+      responses:
+        '200':
+          description: Données d'entraînement
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  session:
+                    nullable: true
+                    type: object
+                    additionalProperties: true
+                  sets:
+                    type: array
+                    items:
+                      type: object
+                      additionalProperties: true
+                  cardio:
+                    type: array
+                    items:
+                      type: object
+                      additionalProperties: true
