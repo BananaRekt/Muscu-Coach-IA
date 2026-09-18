@@ -1,0 +1,13 @@
+name = "muscu-coach-sync"
+main = "worker-d1.js"
+compatibility_date = "2026-09-18"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "muscu-coach-d1"
+database_id = "REMPLACE_PAR_LE_DATABASE_ID"
+
+# Déploiement :
+# wrangler d1 create muscu-coach-d1
+# wrangler d1 execute muscu-coach-d1 --remote --file=d1-schema.sql
+# wrangler deploy
