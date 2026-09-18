@@ -2,61 +2,52 @@
   "version": 1,
   "active": true,
   "date": "18/09/2026",
-  "objectif": "Haut du corps",
-  "notes": "Séance classique de 1 heure. Charges à calibrer selon les sensations. Pas de recherche d'échec. Adapter ou arrêter en cas de douleur.",
+  "objectif": "Bas du corps",
+  "notes": "Séance classique d'environ 1 heure. Charges à calibrer selon les sensations. Pas de recherche d'échec. Adapter ou arrêter en cas de douleur.",
   "exercises": [
     {
-      "name": "Presse à pectoraux",
-      "subtitle": "Presse à pectoraux à leviers — mouvement convergent",
-      "gif": "https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@main/pectorals/lever-chest-press.gif",
+      "name": "Presse à cuisses",
+      "subtitle": "Presse à cuisses à 45° à chargement libre",
+      "gif": "https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@main/glutes/sled-45-leg-press.gif",
       "sets": 4,
+      "reps_min": 8,
+      "reps_max": 12,
+      "rest_seconds": 120
+    },
+    {
+      "name": "Leg extension",
+      "subtitle": "Extension des jambes à la machine",
+      "gif": "https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/quads/lever-leg-extension.gif",
+      "sets": 3,
+      "reps_min": 10,
+      "reps_max": 12,
+      "rest_seconds": 90
+    },
+    {
+      "name": "Leg curl assis",
+      "subtitle": "Flexion des jambes assise à la machine",
+      "gif": "https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/hamstrings/lever-seated-leg-curl.gif",
+      "sets": 3,
+      "reps_min": 10,
+      "reps_max": 12,
+      "rest_seconds": 90
+    },
+    {
+      "name": "Presse à cuisses — pieds hauts",
+      "subtitle": "Presse à cuisses 45° avec placement des pieds plus haut",
+      "gif": "https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@main/glutes/sled-45-leg-press.gif",
+      "sets": 3,
       "reps_min": 10,
       "reps_max": 12,
       "rest_seconds": 120
     },
     {
-      "name": "Tirage vertical",
-      "subtitle": "Tirage vertical à la poulie",
-      "gif": "https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@main/lats/cable-pulldown.gif",
+      "name": "Mollets à la machine",
+      "subtitle": "Élévation des mollets à la machine",
+      "gif": "https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/calves/lever-standing-calf-raise.gif",
       "sets": 3,
-      "reps_min": 8,
-      "reps_max": 12,
-      "rest_seconds": 120
-    },
-    {
-      "name": "Rowing assis",
-      "subtitle": "Rowing assis à la poulie",
-      "gif": "https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@main/upper-back/cable-seated-row.gif",
-      "sets": 3,
-      "reps_min": 8,
-      "reps_max": 12,
-      "rest_seconds": 120
-    },
-    {
-      "name": "Développé épaules",
-      "subtitle": "Développé épaules à la machine",
-      "gif": "https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@main/delts/lever-military-press.gif",
-      "sets": 3,
-      "reps_min": 8,
-      "reps_max": 12,
-      "rest_seconds": 120
-    },
-    {
-      "name": "Curl biceps à la machine",
-      "subtitle": "Curl biceps à la machine",
-      "gif": "https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@main/biceps/lever-bicep-curl.gif",
-      "sets": 3,
-      "reps_min": 8,
-      "reps_max": 12,
-      "rest_seconds": 90
-    },
-    {
-      "name": "Extension triceps",
-      "subtitle": "Extension triceps à la poulie",
-      "gif": "https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@main/triceps/cable-pushdown.gif",
-      "sets": 3,
-      "reps_min": 8,
-      "reps_max": 12,
+      "reps_min": 12,
+      "reps_max": 15,
       "rest_seconds": 90
     }
   ]
