@@ -26,16 +26,6 @@ async function getActiveSession(db) {
   `).bind(uid).first();
 }
 
-async function getLatestSession(db) {
-  return db.prepare(`
-    SELECT *
-    FROM workout_sessions
-    WHERE user_id = ?
-    ORDER BY session_date DESC, created_at DESC
-    LIMIT 1
-  `).bind(uid).first();
-}
-
 async function sessionPayload(db, session) {
   if (!session) return { active: false, session: null, exercises: [], sets: [], cardio: [] };
 
@@ -85,11 +75,14 @@ export default {
       }
 
       if (request.method === "GET" && url.pathname === "/api/session") {
-        return json(await sessionPayload(env.DB, await getActiveSession(env.DB)));
-      }
-
-      if (request.method === "GET" && url.pathname === "/api/session/latest") {
-        return json(await sessionPayload(env.DB, await getLatestSession(env.DB)));
+        const session = await env.DB.prepare(`
+          SELECT *
+          FROM workout_sessions
+          WHERE user_id = ?
+          ORDER BY session_date DESC, created_at DESC
+          LIMIT 1
+        `).bind(uid).first();
+        return json(await sessionPayload(env.DB, session));
       }
 
       if (request.method === "GET" && url.pathname === "/api/history") {
@@ -267,14 +260,22 @@ export default {
       }
 
       if (request.method === "POST" && url.pathname === "/api/session/stop") {
-        const result = await env.DB.prepare(`
+        const result = await env.DB.prepare(\`
           UPDATE workout_sessions
           SET status='stopped', updated_at=?
           WHERE user_id=? AND status='active'
-        `).bind(now(), uid).run();
+        \`).bind(now(), uid).run();
+
+        const session = await env.DB.prepare(\`
+          SELECT *
+          FROM workout_sessions
+          WHERE user_id=?
+          ORDER BY session_date DESC, created_at DESC
+          LIMIT 1
+        \`).bind(uid).first();
 
         return json({
-          ok: true,
+          ...(await sessionPayload(env.DB, session)),
           stopped: Number(result?.meta?.changes || 0)
         });
       }
