@@ -78,6 +78,10 @@ export default {
         return json(await sessionPayload(env.DB, await getActiveSession(env.DB)));
       }
 
+      if (request.method === "GET" && url.pathname === "/api/session/latest") {
+        return json(await sessionPayload(env.DB, await getLatestSession(env.DB)));
+      }
+
       if (request.method === "GET" && url.pathname === "/api/history") {
         const sets = await env.DB.prepare(\`
           SELECT ps.*, ws.session_date, se.exercise_name
@@ -150,6 +154,57 @@ export default {
 
         const saved = await env.DB.prepare(\`SELECT * FROM workout_sessions WHERE id = ?\`).bind(session.id).first();
         return json(await sessionPayload(env.DB, saved));
+      }
+
+      if (request.method === "POST" && url.pathname === "/api/session/exercise") {
+        const b = await request.json();
+
+        if (!b?.session_id || !b?.name) {
+          return json({ ok:false, error:"session_id et name sont requis" }, 400);
+        }
+
+        const session = await env.DB.prepare(`
+          SELECT id
+          FROM workout_sessions
+          WHERE id = ? AND user_id = ? AND status = 'active'
+        `).bind(b.session_id, uid).first();
+
+        if (!session) {
+          return json({ ok:false, error:"Session active introuvable" }, 404);
+        }
+
+        const count = await env.DB.prepare(`
+          SELECT COUNT(*) AS c
+          FROM session_exercises
+          WHERE session_id = ?
+        `).bind(b.session_id).first();
+
+        const exerciseId = b.id || id();
+
+        await env.DB.prepare(`
+          INSERT INTO session_exercises(
+            id,session_id,exercise_name,subtitle,exercise_type,gif,
+            sets_planned,reps_min,reps_max,rest_seconds,duration_minutes,
+            intensity,is_extra,sort_order
+          ) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+        `).bind(
+          exerciseId,
+          b.session_id,
+          b.name,
+          b.subtitle || "",
+          b.exercise_type || "strength",
+          b.gif || "",
+          Number(b.sets || 1),
+          b.reps_min ?? null,
+          b.reps_max ?? null,
+          b.rest_seconds ?? null,
+          b.duration_minutes ?? null,
+          b.intensity ?? null,
+          1,
+          Number(count?.c || 0)
+        ).run();
+
+        return json({ ok:true, exercise_id:exerciseId });
       }
 
       if (request.method === "POST" && url.pathname === "/api/set") {
