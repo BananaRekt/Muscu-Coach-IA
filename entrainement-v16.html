@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0b0d11">
+<title>Muscu Coach IA</title>
+<style>
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;background:#0b0d11;overflow:hidden}iframe{display:block;border:0;width:100%;height:100%;min-height:100vh;background:#0b0d11}
+</style>
+</head>
+<body>
+<iframe id="coachFrame" src="entrainement-v15.html?v=15" title="Muscu Coach IA"></iframe>
+<script>
+(function(){
+  const frame=document.getElementById('coachFrame');
+  const EXTRA_KEY='muscuCoachTodayExtrasV1';
+  let installed=false;
+
+  function safeRead(){
+    try{return JSON.parse(localStorage.getItem(EXTRA_KEY)||'{}')}catch(e){return {key:'',items:[]}}
+  }
+  function safeWrite(v){localStorage.setItem(EXTRA_KEY,JSON.stringify(v))}
+  function baseKey(data){return JSON.stringify({date:data?.date||'',objectif:data?.objectif||'',exercises:(data?.exercises||[]).map(e=>[e.name,e.sets])})}
+  function baseExercises(){const w=frame.contentWindow;return (w.today?.exercises||[]).filter(e=>!e._extra)}
+  function currentBaseKey(){const w=frame.contentWindow;return baseKey({date:w.today?.date,objectif:w.today?.objectif,exercises:baseExercises()})}
+  function ensureFreshExtras(){const s=safeRead(),k=currentBaseKey();if(s.key!==k){safeWrite({key:k,items:[]});return []}return Array.isArray(s.items)?s.items:[]}
+  function mergeExtras(){const w=frame.contentWindow;if(!w.today||!Array.isArray(w.today.exercises))return;const base=baseExercises(),extras=ensureFreshExtras();w.today.exercises=[...base,...extras];if(typeof w.loadTodayProgress==='function')w.loadTodayProgress();if(typeof w.renderHome==='function')w.renderHome()}
+  function hasSession(){const w=frame.contentWindow;return !!(w.today?.active&&(w.today.exercises||[]).length&&!w.isStopped?.())}
+  function showFrameStatus(text,cls){try{const w=frame.contentWindow;if(typeof w.showStatus==='function')w.showStatus(text,cls||'')}catch(e){}}
+  function injectCss(doc){if(doc.getElementById('mc-extra-style'))return;const s=doc.createElement('style');s.id='mc-extra-style';s.textContent=`#mcAddExtraBtn{margin-top:8px;border:1px solid #354154;background:#182231;color:#dbe7ff}#mcAddExtraBtn:hover{filter:brightness(1.08)}#mcExtraModal{position:fixed;inset:0;background:rgba(0,0,0,.68);display:flex;align-items:flex-end;justify-content:center;padding:12px;z-index:200}#mcExtraModal.hidden{display:none!important}.mc-extra-box{width:100%;max-width:620px;background:#151922;border:1px solid #334052;border-radius:22px;padding:17px;box-shadow:0 20px 70px rgba(0,0,0,.45)}.mc-extra-title{font-size:19px;font-weight:900;margin-bottom:7px}.mc-extra-sub{font-size:13px;color:#9ca7b5;line-height:1.45}.mc-extra-box label{display:block;font-size:13px;font-weight:800;margin:14px 0 6px}.mc-extra-box select,.mc-extra-box input{font:inherit;width:100%;border-radius:13px;border:1px solid #384352;background:#0f141b;color:#fff;padding:13px}.mc-extra-preview{background:#0e1319;border-radius:13px;padding:11px;margin-top:10px;font-size:13px;line-height:1.4}.mc-extra-row{display:flex;gap:8px;margin-top:13px}.mc-extra-row>*{flex:1}.mc-extra-primary{background:#f0f3f6!important;color:#11151b!important;border-color:#f0f3f6!important}.mc-extra-cancel{background:#222a35!important;color:#fff!important}`;doc.head.appendChild(s)}
+  function injectUi(){
+    const w=frame.contentWindow,doc=frame.contentDocument;injectCss(doc);if(doc.getElementById('mcAddExtraBtn'))return;
+    const cards=[...doc.querySelectorAll('.card')],catalogCard=cards.find(c=>c.querySelector('.section-title')?.textContent.includes('Exercices'));if(!catalogCard)return;
+    const startBtn=catalogCard.querySelector('button.primary[onclick="startSelectedExercise()"]');if(!startBtn)return;
+    const btn=doc.createElement('button');btn.id='mcAddExtraBtn';btn.className='secondary';btn.textContent='➕ Ajouter à la séance en cours';startBtn.insertAdjacentElement('afterend',btn);
+    const modal=doc.createElement('div');modal.id='mcExtraModal';modal.className='hidden';modal.innerHTML=`<div class="mc-extra-box"><div class="mc-extra-title">➕ Ajouter à la séance en cours</div><div class="mc-extra-sub">L’exercice sera comptabilisé dans la séance actuelle, mais ne modifiera pas ton programme permanent.</div><label>Exercice</label><select id="mcExtraSelect"></select><div id="mcExtraPreview" class="mc-extra-preview"></div><label>Nombre de séries</label><input id="mcExtraSets" type="number" min="1" max="10" step="1"><div class="mc-extra-row"><button id="mcExtraAdd" class="mc-extra-primary">Ajouter à la séance</button><button id="mcExtraCancel" class="mc-extra-cancel">Annuler</button></div></div>`;doc.body.appendChild(modal);
+    const sel=doc.getElementById('mcExtraSelect'),sets=doc.getElementById('mcExtraSets'),preview=doc.getElementById('mcExtraPreview');let catalog=[];
+    function updatePreview(){const e=catalog[Number(sel.value)];if(!e)return;sets.value=Math.max(1,Number(e.sets)||1);preview.innerHTML=`<b>${e.name}</b><br><span style="color:#9ca7b5">${e.subtitle||''}</span><br><span style="color:#cbd4df">🎯 ${e.reps_min}-${e.reps_max} reps · ⏱️ ${Math.round((e.rest_seconds||120)/60)} min</span>`}
+    function openModal(){catalog=w.catalog||[];sel.innerHTML=catalog.map((e,i)=>`<option value="${i}">${e.name}</option>`).join('');if(catalog.length)updatePreview();modal.classList.remove('hidden')}
+    btn.onclick=openModal;sel.addEventListener('change',updatePreview);doc.getElementById('mcExtraCancel').onclick=()=>modal.classList.add('hidden');modal.addEventListener('click',ev=>{if(ev.target===modal)modal.classList.add('hidden')});
+    doc.getElementById('mcExtraAdd').onclick=()=>{if(!hasSession()){showFrameStatus('Aucune séance active. Demande d’abord une séance au coach.','warn');modal.classList.add('hidden');return}const e={...(catalog[Number(sel.value)]||{})};if(!e.name)return;const currentNames=(w.today?.exercises||[]).map(x=>x.name);if(currentNames.includes(e.name)){showFrameStatus('Cet exercice est déjà dans la séance du jour. Choisis un autre exercice.','warn');return}e.sets=Math.max(1,Math.min(10,Number(sets.value)||Number(e.sets)||1));e._extra=true;const items=ensureFreshExtras();items.push(e);safeWrite({key:currentBaseKey(),items});mergeExtras();modal.classList.add('hidden');showFrameStatus('✅ '+e.name+' ajouté à la séance en cours.','ok')};
+  }
+  function patchFunctions(){const w=frame.contentWindow;if(installed)return;if(!w.today||typeof w.refreshAll!=='function')return;installed=true;w.sessionKey=function(){const ex=(w.today?.exercises||[]).filter(e=>!e._extra);return JSON.stringify({date:w.today?.date||'',objectif:w.today?.objectif||'',exercises:ex.map(e=>[e.name,e.sets])})};const originalRefresh=w.refreshAll;w.refreshAll=async function(){await originalRefresh();const s=safeRead(),k=currentBaseKey();if(s.key!==k)safeWrite({key:k,items:[]});mergeExtras()};ensureFreshExtras();mergeExtras();injectUi()}
+  frame.addEventListener('load',()=>setTimeout(()=>{patchFunctions();injectUi()},120));setTimeout(()=>{patchFunctions();injectUi()},1200);
+})();
+</script>
+</body>
+</html>
